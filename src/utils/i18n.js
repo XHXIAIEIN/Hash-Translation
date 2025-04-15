@@ -27,8 +27,8 @@ export const useI18n = () => {
     let value = translations.value[lang]?.[key] || key
 
     // 替换参数
-    Object.entries(params).forEach(([key, value]) => {
-      value = value.replace(`{${key}}`, value)
+    Object.entries(params).forEach(([paramKey, paramValue]) => {
+      value = value.replace(`{${paramKey}}`, paramValue)
     })
 
     return value

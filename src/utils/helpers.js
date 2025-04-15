@@ -1,35 +1,4 @@
-export const calculateMD5 = async (str) => {
-  // 使用Web Crypto API实现MD5
-  const encoder = new TextEncoder();
-  const data = encoder.encode(str);
-  
-  // 使用SubtleCrypto API计算MD5哈希
-  const hashBuffer = await crypto.subtle.digest('MD5', data);
-  
-  // 将ArrayBuffer转换为字节数组
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  
-  // 将字节转换为十六进制字符串
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  
-  return hashHex;
-}
-
-// 同步版本，用于兼容原有代码
-export const calculateMD5Sync = (str) => {
-  // 简单的字符串哈希函数实现
-  // 注意：这不是真正的MD5，但对于生成唯一标识符足够用了
-  const hash = str.split('').reduce((hash, char) => {
-    const charCode = char.charCodeAt(0);
-    return ((hash << 5) - hash) + charCode | 0; // 位运算确保结果是32位整数
-  }, 0);
-  
-  // 转换为十六进制字符串并填充到32位长度
-  return (hash >>> 0).toString(16).padStart(8, '0') + 
-         Math.abs(hash ^ (hash >>> 16)).toString(16).padStart(8, '0') +
-         Math.abs((hash << 8) ^ (hash >>> 8)).toString(16).padStart(8, '0') +
-         Math.abs((hash << 16) ^ hash).toString(16).padStart(8, '0');
-}
+import { calculateMD5, calculateHashSync } from './hash.js';
 
 export const processCSV = (csvText) => {
   try {
@@ -105,7 +74,7 @@ export const processCSV = (csvText) => {
         return;
       }
 
-      const key = calculateMD5Sync(originalText);
+      const key = calculateHashSync(originalText);
       headers.forEach((lang, index) => {
         translations[lang][key] = cleanValues[index] || originalText;
       });
